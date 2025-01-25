@@ -1,0 +1,54 @@
+name: Deploy site to Pages
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ['dev']
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+
+jobs:
+  deploy-gh-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+      # 拉取 github 仓库代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # submodules: true
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+         # 选择要使用的 node 版本
+          # node-version: ${{ matrix.node-version }}
+          node-version: 22.13.1
+          # 设置发包 npm 地址仓库
+          registry-url: https://registry.npmjs.org
+          # 缓存 npm 依赖
+          cache: npm
+      - name: Install dependencies 📦️
+        run: npm install
+        
+      - name: 构建文档
+        env:
+          NODE_OPTIONS: --max_old_space_size=8192
+        run: |-
+          npm run docs:build
+		  
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          token: ${{ secrets.PATH_TOKEN }}
+          repository-name: imnxg/imnxg.github.io
+          branch: gh-pages
+          folder: dist
