@@ -47,5 +47,5 @@ jobs:
         with:
           token: ${{ secrets.PATH_TOKEN }}
           repository-name: imnxg/imnxg.github.io
-          branch: gh-pages
+          branch: devpages
           folder: dist
